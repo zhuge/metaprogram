@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# build dir
+build/
+
+# macOSX temp file
+.DS_Store
