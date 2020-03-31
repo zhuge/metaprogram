@@ -1,7 +1,6 @@
 #include "catch2/catch.hpp"
 #include "type_traits_cvrp.h"
 #include "type_traits_type.h"
-#include <type_traits>
 
 USE_META
 
