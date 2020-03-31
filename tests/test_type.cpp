@@ -194,13 +194,115 @@ TEST_CASE("traits type", "[trais][type]" ) {
 
     SECTION("enum") {
     	// basic
-    	REQUIRE(is_enum<TestEnum>());
-    	REQUIRE(is_enum<TestEnumClass>());
+    	REQUIRE(is_enum<TestEnum>()); // enum
+    	REQUIRE(is_enum<TestEnumClass>()); // enum
 
-    	REQUIRE_FALSE(is_enum<TestClass>());
-    	REQUIRE_FALSE(is_enum<TestUnion>());
+    	REQUIRE_FALSE(is_enum<int>()); // int 
+    	REQUIRE_FALSE(is_enum<float>()); // float
+    	REQUIRE_FALSE(is_enum<void>()); // void
+    	REQUIRE_FALSE(is_enum<std::nullptr_t>()); // nullptr
+    	REQUIRE_FALSE(is_enum<int&>()); // reference
+    	REQUIRE_FALSE(is_enum<int*>()); // pointer
+    	REQUIRE_FALSE(is_enum<FuncPointer>()); // function pointer
+    	REQUIRE_FALSE(is_enum<decltype(&TestClass::mf)>()); // pointer to member function
+    	REQUIRE_FALSE(is_enum<decltype(&TestClass::mo)>()); // pointer to member object
+    	REQUIRE_FALSE(is_enum<BasicFunc>()); // function
+    	REQUIRE_FALSE(is_enum<TestUnion>()); // union
+    	REQUIRE_FALSE(is_enum<TestClass>()); // class
+    	REQUIRE_FALSE(is_enum<int[]>()); // array
+    	REQUIRE_FALSE(is_enum<int[6]>()); // array
+    }
 
-    	REQUIRE_FALSE(is_enum<int>());
+    SECTION("arithmetic") {
+    	// basic
+    	REQUIRE(is_arithmetic<int>()); // int 
+    	REQUIRE(is_arithmetic<float>()); // float
+    	REQUIRE_FALSE(is_arithmetic<void>()); // void
+    	REQUIRE_FALSE(is_arithmetic<std::nullptr_t>()); // nullptr
+    	REQUIRE_FALSE(is_arithmetic<int&>()); // reference
+    	REQUIRE_FALSE(is_arithmetic<int*>()); // pointer
+    	REQUIRE_FALSE(is_arithmetic<FuncPointer>()); // function pointer
+    	REQUIRE_FALSE(is_arithmetic<decltype(&TestClass::mf)>()); // pointer to member function
+    	REQUIRE_FALSE(is_arithmetic<decltype(&TestClass::mo)>()); // pointer to member object
+    	REQUIRE_FALSE(is_arithmetic<BasicFunc>()); // function
+    	REQUIRE_FALSE(is_arithmetic<TestEnum>()); // enum
+    	REQUIRE_FALSE(is_arithmetic<TestUnion>()); // union
+    	REQUIRE_FALSE(is_arithmetic<TestClass>()); // class
+    	REQUIRE_FALSE(is_arithmetic<int[]>()); // array
+    	REQUIRE_FALSE(is_arithmetic<int[6]>()); // array
     }
    
+   	SECTION("fundamental") {
+    	// basic
+    	REQUIRE(is_fundamental<int>()); // int 
+    	REQUIRE(is_fundamental<float>()); // float
+    	REQUIRE(is_fundamental<void>()); // void
+    	REQUIRE(is_fundamental<std::nullptr_t>()); // nullptr
+    	REQUIRE_FALSE(is_fundamental<int&>()); // reference
+    	REQUIRE_FALSE(is_fundamental<int*>()); // pointer
+    	REQUIRE_FALSE(is_fundamental<FuncPointer>()); // function pointer
+    	REQUIRE_FALSE(is_fundamental<decltype(&TestClass::mf)>()); // pointer to member function
+    	REQUIRE_FALSE(is_fundamental<decltype(&TestClass::mo)>()); // pointer to member object
+    	REQUIRE_FALSE(is_fundamental<BasicFunc>()); // function
+    	REQUIRE_FALSE(is_fundamental<TestEnum>()); // enum
+    	REQUIRE_FALSE(is_fundamental<TestUnion>()); // union
+    	REQUIRE_FALSE(is_fundamental<TestClass>()); // class
+    	REQUIRE_FALSE(is_fundamental<int[]>()); // array
+    	REQUIRE_FALSE(is_fundamental<int[6]>()); // array
+    }
+
+    SECTION("scalar") {
+    	// basic
+    	REQUIRE(is_scalar<int>()); // int 
+    	REQUIRE(is_scalar<float>()); // float
+    	REQUIRE_FALSE(is_scalar<void>()); // void
+    	REQUIRE(is_scalar<std::nullptr_t>()); // nullptr
+    	REQUIRE_FALSE(is_scalar<int&>()); // reference
+    	REQUIRE(is_scalar<int*>()); // pointer
+    	REQUIRE(is_scalar<FuncPointer>()); // function pointer
+    	REQUIRE(is_scalar<decltype(&TestClass::mf)>()); // pointer to member function
+    	REQUIRE(is_scalar<decltype(&TestClass::mo)>()); // pointer to member object
+    	REQUIRE_FALSE(is_scalar<BasicFunc>()); // function
+    	REQUIRE(is_scalar<TestEnum>()); // enum
+    	REQUIRE_FALSE(is_scalar<TestUnion>()); // union
+    	REQUIRE_FALSE(is_scalar<TestClass>()); // class
+    	REQUIRE_FALSE(is_scalar<int[]>()); // array
+    	REQUIRE_FALSE(is_scalar<int[6]>()); // array
+    }
+
+    SECTION("object") {
+    	REQUIRE(is_object<int>()); // int 
+    	REQUIRE(is_object<float>()); // float
+    	REQUIRE_FALSE(is_object<void>()); // void
+    	REQUIRE(is_object<std::nullptr_t>()); // nullptr
+    	REQUIRE_FALSE(is_object<int&>()); // reference
+    	REQUIRE(is_object<int*>()); // pointer
+    	REQUIRE(is_object<FuncPointer>()); // function pointer
+    	REQUIRE(is_object<decltype(&TestClass::mf)>()); // pointer to member function
+    	REQUIRE(is_object<decltype(&TestClass::mo)>()); // pointer to member object
+    	REQUIRE_FALSE(is_object<BasicFunc>()); // function
+    	REQUIRE(is_object<TestEnum>()); // enum
+    	REQUIRE(is_object<TestUnion>()); // union
+    	REQUIRE(is_object<TestClass>()); // class
+    	REQUIRE(is_object<int[]>()); // array
+    	REQUIRE(is_object<int[6]>()); // array
+    }
+
+    SECTION("compound") {
+    	REQUIRE_FALSE(is_compound<int>()); // int 
+    	REQUIRE_FALSE(is_compound<float>()); // float
+    	REQUIRE_FALSE(is_compound<void>()); // void
+    	REQUIRE_FALSE(is_compound<std::nullptr_t>()); // nullptr
+    	REQUIRE(is_compound<int&>()); // reference
+    	REQUIRE(is_compound<int*>()); // pointer
+    	REQUIRE(is_compound<FuncPointer>()); // function pointer
+    	REQUIRE(is_compound<decltype(&TestClass::mf)>()); // pointer to member function
+    	REQUIRE(is_compound<decltype(&TestClass::mo)>()); // pointer to member object
+    	REQUIRE(is_compound<BasicFunc>()); // function
+    	REQUIRE(is_compound<TestEnum>()); // enum
+    	REQUIRE(is_compound<TestUnion>()); // union
+    	REQUIRE(is_compound<TestClass>()); // class
+    	REQUIRE(is_compound<int[]>()); // array
+    	REQUIRE(is_compound<int[6]>()); // array
+    }
 }

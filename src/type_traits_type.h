@@ -388,12 +388,87 @@ struct is_enum :
         && ! is_array<T>::value
         && ! is_union<T>::value
         && ! is_class<T>::value
+        && ! is_function<T>::value
         && ! is_pointer<T>::value
         && ! is_lvalue_reference<T>::value
         && ! is_rvalue_reference<T>::value
         && ! is_member_function_pointer<T>::value
         && ! is_member_object_pointer<T>::value
     > {};
+
+/***************************** Composite type categories ******************
+Provides the member constant value that is equal to true, if T is the type
+1. P
+2. const P
+3. volatile P
+4. const volatile P
+**************************************************************************/
+
+// Check if T is an arithmetic type (that is, 
+//    	1. an integral type 
+//		2. or a floating-point type)
+// or a cv-qualified version thereof
+template <class T>
+struct is_arithmetic : 
+	public bool_constant<
+		is_integral<T>::value
+		|| is_floating_point<T>::value
+	>{};
+
+// Check if T is a fundamental type (that is, 
+//		1. arithmetic type
+//		2. or void
+//		3. or nullptr_t)
+template <class T>
+struct is_fundamental :
+	public bool_constant<
+		is_arithmetic<T>::value
+		|| is_void<T>::value
+		|| is_null_pointer<T>::value
+	>{};
+
+// Check if T is a scalar type (that is a possibly cv-qualified
+//		1. arithmetic
+//		2. pointer
+//		3. pointer to member
+//		4. enumeration
+//		5. or std::nullptr_t type)
+template <class T>
+struct is_scalar :
+	public bool_constant<
+		is_arithmetic<T>::value
+		|| is_pointer<T>::value
+		|| is_member_pointer<T>::value
+		|| is_enum<T>::value
+		|| is_null_pointer<T>::value
+	> {};
+
+// Check if T is an object type (that is any possibly cv-qualified type other than
+//		1. function
+//		2. reference
+//		3. or void types)
+template <class T>
+struct is_object :
+	public bool_constant<
+		!is_function<T>::value
+		&& !is_reference<T>::value
+		&& !is_void<T>::value
+	> {};
+
+// Check if T is a compound type (that is, 
+//		1. array
+//		2. function
+//		3. object pointer
+//		4. function pointer
+//		5. member object pointer
+//		6. member function pointer
+//		7. reference
+//		8. class
+//		9. union
+//		10. or enumeration, 
+// including any cv-qualified variants)
+template <class T>
+struct is_compound : public bool_constant<!is_fundamental<T>::value> {};
 
 NS_META_END
 
