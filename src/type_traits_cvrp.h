@@ -33,15 +33,18 @@ struct remove_volatile<volatile T> : type_identity<T> {};
 template <class T>
 using remove_cv = remove_const<typename remove_volatile<T>::type>;
 
-// Add cv-qualifier to the type T, except it has a cv-qualifier added 
-// (unless T is a function,  a reference, or already has this cv-qualifier)
+// Add cv-qualifier to the type T, except
+//      1. T already has a cv-qualifier 
+//      2. T is a function
+//      3. T is a reference
 // Example:
 //      static_assert(is_same<const volatile int, add_cv<int>::type>(), 
 //                  "add_cv<int>::type is same as const volatile int");
 // Implementation Note:
-// Cv-qualified references are ill-formed except when the cv-qualifiers are 
+// 1. Cv-qualified references are ill-formed except when the cv-qualifiers are 
 // introduced through the use of a typedef (7.1.3) or of a template type 
 // argument (14.3), in which case the cv-qualifiers are ignored.
+// 2. I think cv-qualified function is as same as cv-qualified references
 template <class T>
 struct add_const : type_identity<const T> {};
 
@@ -81,15 +84,19 @@ namespace detail {
     auto try_add_rref(...) -> type_identity<T>;
 }
 
-// Creates a lvalue or rvalue reference type of T.
+// Creates a lvalue or rvalue reference type of T， except :
+//      1. T is a function type that has  cv- or ref- qualifier
+//      2. T is void 
 // Example:
 //      static_assert(is_same<int&, add_lvalue_reference<int>::type>(), 
 //                  "add_lvalue_reference<int>::type is same as int&");
 //      static_assert(is_same<int&&, add_rvalue_reference<int>::type>(), 
 //                  "add_rvalue_reference<int>::type is same as int&&");
 // Implementation Note:
-// The major difference to directly using T& is that std::add_lvalue_reference<void>::type
+// 1. The major difference to directly using T& is that std::add_lvalue_reference<void>::type
 // is void, while void& leads to a compilation error.
+// 2. Add reference to a function type that has  cv- or ref- qualifier or void is ill-formed,
+// so the SFINAE will be good
 template <class T>
 struct add_lvalue_reference : public decltype(detail::try_add_lref<T>(0)) {};
 
@@ -102,7 +109,8 @@ struct add_rvalue_reference : public decltype(detail::try_add_rref<T>(0)) {};
 //      static_assert(is_same<int, remove_pointer<int*>::type>(), 
 //                  "remove_pointer<int*>::type is same as int");
 // Implementation Note:
-// remove_pointer should remove all cv-qualifier for the pointer
+// 1. remove_pointer should remove all cv-qualifier for the pointer, like :
+//      int* const volatile
 template <class T>
 struct remove_pointer : type_identity<T> {};
 
@@ -125,19 +133,18 @@ namespace detail {
     auto try_add_pointer(...) -> type_identity<T>;
 };
 
-// If T is a reference type, then provides the member typedef type 
-// which is a pointer to the referred type.
-// Otherwise provide the member typedef type which is the type T*.
+// Provide the member typedef type which is the type T*, except :
+//      1. T is a reference type, provides the member typedef type which is a pointer to the referred type.
+//      2. T is cv- or ref-qualified function type, provides the member typedef type which is the type T.
 // Example: 
 //      static_assert(is_same<int*, add_pointer<int>::type>(), 
 //                  "add_pointer<int>::type is same as int*");
 // Implementation Note:
-// if T is a cv- or ref-qualified function type, provides the member 
-// typedef type which is the type T.
-// They are functions like (all be member functions): 
+// Cv- or ref-qualified function type are functions like (all be member functions): 
 //      int f() const;
 //      int f() &;
 //      int f() &&;
+// And add pointer to these type is ill-formed, so the SFINAE will be good
 template <class T>
 struct add_pointer : decltype(detail::try_add_pointer<T>(0)) {};
 
