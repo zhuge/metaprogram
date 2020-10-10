@@ -356,24 +356,28 @@ struct is_reference
 
 // Checks whether T is a non-static member function.
 template <class T>
-struct is_member_function_pointer : public false_type {};
+struct is_member_function_pointer_helper : public false_type {};
 
 template <class T, class U>
-struct is_member_function_pointer<T U::*> : public is_function<T> {};
+struct is_member_function_pointer_helper<T U::*> : public is_function<T> {};
 
-// Checks whether T is a non-static member object.
 template <class T>
-struct is_member_object_pointer : false_type {};
-
-template <class T, class U>
-struct is_member_object_pointer<U T::*> : bool_constant<!is_member_function_pointer<U T::*>::value> {};
+struct is_member_function_pointer : public is_member_function_pointer_helper<typename remove_cv<T>::type> {};
 
 // Checks whether T is a non-static member pointer.
 template <class T>
-struct is_member_pointer : public false_type {};
+struct is_member_pointer_helper : public false_type {};
 
 template <class T, class U>
-struct is_member_pointer<T U::*> : public true_type {};
+struct is_member_pointer_helper<T U::*> : public true_type {};
+
+template <class T>
+struct is_member_pointer : public is_member_pointer_helper<typename remove_cv<T>::type> {};
+
+// Checks whether T is a non-static member object.
+template <class T>
+struct is_member_object_pointer : bool_constant<is_member_pointer<T>::value && !is_member_function_pointer<T>::value> {};
+
 
 // Checks whether T is an enumeration type. 
 // Implemetation Note:
