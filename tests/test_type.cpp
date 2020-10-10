@@ -86,12 +86,12 @@ TEST_CASE("traits type", "[trais][type]" ) {
 		REQUIRE_FALSE(is_floating_point<int>());
 
 		// array
-		REQUIRE(is_bound_array<int[6]>());
-		REQUIRE_FALSE(is_bound_array<int[]>());
-		REQUIRE_FALSE(is_bound_array<int>());
-		REQUIRE(is_unbound_array<int[]>());
-		REQUIRE_FALSE(is_unbound_array<int[6]>());
-		REQUIRE_FALSE(is_unbound_array<int>());
+		REQUIRE(is_bounded_array<int[6]>());
+		REQUIRE_FALSE(is_bounded_array<int[]>());
+		REQUIRE_FALSE(is_bounded_array<int>());
+		REQUIRE(is_unbounded_array<int[]>());
+		REQUIRE_FALSE(is_unbounded_array<int[6]>());
+		REQUIRE_FALSE(is_unbounded_array<int>());
 		REQUIRE(is_array<int[6]>());
 		REQUIRE(is_array<int[]>());
 		REQUIRE_FALSE(is_array<int>());

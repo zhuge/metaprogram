@@ -111,25 +111,25 @@ struct is_floating_point :
 // Checks whether T is an array type with bound. Provides the member constant value which is 
 // equal to true, if T is an array type with bound. Otherwise, value is equal to false.
 template <class T>
-struct is_bound_array : public false_type {};
+struct is_bounded_array : public false_type {};
 
 template <class T, size_t N>
-struct is_bound_array<T[N]> : public true_type {};
+struct is_bounded_array<T[N]> : public true_type {};
 
 // Checks whether T is an array type without bound. Provides the member constant value which is 
 // equal to true, if T is an array type without bound. Otherwise, value is equal to false.
 template <class T>
-struct is_unbound_array : public false_type {};
+struct is_unbounded_array : public false_type {};
 
 template <class T>
-struct is_unbound_array<T[]> : public true_type {};
+struct is_unbounded_array<T[]> : public true_type {};
 
 // Checks whether T is an array type. Provides the member constant value which is 
 // equal to true, if T is an array type. Otherwise, value is equal to false.
 template <class T>
 struct is_array : public bool_constant<
-    is_bound_array<T>::value
-    || is_unbound_array<T>::value> {};
+    is_bounded_array<T>::value
+    || is_unbounded_array<T>::value> {};
 
 
 namespace detail {
